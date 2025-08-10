@@ -1,0 +1,6 @@
+{
+  "databaseURL": "https://Amaan-Ur-Raheman-s-workspace-st3qeb.eu-central-1.xata.sh/db/snap-cast",
+  "codegen": {
+    "output": "src/xata.ts"
+  }
+}
