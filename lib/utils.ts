@@ -1,8 +1,8 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { ilike, sql } from "drizzle-orm";
-/* import { videos } from "@/drizzle/schema"; */
 import { DEFAULT_VIDEO_CONFIG, DEFAULT_RECORDING_CONFIG } from "@/constants";
+import { videos } from "@/drizzle/schema";
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
@@ -101,7 +101,7 @@ export const withErrorHandling = <T, A extends unknown[]>(
 	};
 };
 
-/* export const getOrderByClause = (filter?: string) => {
+export const getOrderByClause = (filter?: string) => {
 	switch (filter) {
 		case "Most Viewed":
 			return sql`${videos.views} DESC`;
@@ -113,7 +113,7 @@ export const withErrorHandling = <T, A extends unknown[]>(
 		default:
 			return sql`${videos.createdAt} DESC`;
 	}
-}; */
+};
 
 export const generatePagination = (currentPage: number, totalPages: number) => {
 	if (totalPages <= 7) {
