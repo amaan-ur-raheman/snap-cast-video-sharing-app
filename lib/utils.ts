@@ -144,6 +144,20 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
 	];
 };
 
+/**
+ * The function `getMediaStreams` retrieves media streams for display and microphone input based on the
+ * specified parameters.
+ * @param {boolean} withMic - The `withMic` parameter is a boolean value that determines whether to
+ * include microphone audio in the media streams. If `withMic` is `true`, the function will request
+ * access to the user's microphone and include it in the returned `MediaStreams`. If `withMic` is
+ * `false`,
+ * @returns The function `getMediaStreams` returns an object with the following properties:
+ * - `displayStream`: A `MediaStream` object representing the display stream with video and audio
+ * tracks.
+ * - `micStream`: A `MediaStream` object representing the microphone stream if `withMic` is `true`,
+ * otherwise `null`.
+ * - `hasDisplayAudio`: A boolean indicating whether the display stream has audio tracks
+ */
 export const getMediaStreams = async (
 	withMic: boolean
 ): Promise<MediaStreams> => {
@@ -165,6 +179,24 @@ export const getMediaStreams = async (
 	return { displayStream, micStream, hasDisplayAudio };
 };
 
+/**
+ * The `createAudioMixer` function in TypeScript creates an audio mixer using the provided
+ * AudioContext, display stream, microphone stream (if available), and a flag indicating the presence
+ * of display audio.
+ * @param {AudioContext} ctx - The `ctx` parameter is an instance of the `AudioContext` class, which
+ * represents an audio-processing graph built from audio modules linked together.
+ * @param {MediaStream} displayStream - The `displayStream` parameter is a MediaStream representing the
+ * audio stream from the display or screen that is being captured.
+ * @param {MediaStream | null} micStream - The `micStream` parameter in the `createAudioMixer` function
+ * represents the MediaStream coming from the microphone. It can be either a valid MediaStream object
+ * or `null` if there is no microphone audio input.
+ * @param {boolean} hasDisplayAudio - The `hasDisplayAudio` parameter is a boolean value that indicates
+ * whether the `displayStream` contains audio that needs to be mixed. If `hasDisplayAudio` is `true`,
+ * the audio from the `displayStream` will be mixed with a gain value of 0.7.
+ * @returns The function `createAudioMixer` returns the `destination` MediaStreamDestination node where
+ * the audio streams from `displayStream` and `micStream` (if available) are mixed together with
+ * different gain values and connected.
+ */
 export const createAudioMixer = (
 	ctx: AudioContext,
 	displayStream: MediaStream,
@@ -187,6 +219,15 @@ export const createAudioMixer = (
 	return destination;
 };
 
+/**
+ * The function `setupMediaRecorder` creates a new `MediaRecorder` object with the provided
+ * `MediaStream` and default recording configuration.
+ * @param {MediaStream} stream - A MediaStream object representing a stream of media content, typically
+ * audio or video, that is being captured from a media input device such as a microphone or camera.
+ * @returns A `MediaRecorder` object is being returned. If the creation of the `MediaRecorder` object
+ * with the `DEFAULT_RECORDING_CONFIG` fails, then a `MediaRecorder` object is created without any
+ * additional configuration.
+ */
 export const setupMediaRecorder = (stream: MediaStream) => {
 	try {
 		return new MediaRecorder(stream, DEFAULT_RECORDING_CONFIG);
