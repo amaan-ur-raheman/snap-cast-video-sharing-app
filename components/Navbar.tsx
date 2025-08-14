@@ -5,8 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
 
-const user = {};
-
 const Navbar = () => {
 	const router = useRouter();
 	const { data: session } = authClient.useSession();
@@ -29,10 +27,10 @@ const Navbar = () => {
 					<figure>
 						<button
 							title="User"
-							onClick={() => router.push("/profile/123456")}
+							onClick={() => router.push(`/profile/${user?.id}`)}
 						>
 							<Image
-								src="/assets/images/dummy.jpg"
+								src={user?.image || "/assets/images/dummy.jpg"}
 								alt="User"
 								width={36}
 								height={36}
