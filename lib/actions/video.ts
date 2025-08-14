@@ -56,6 +56,14 @@ const validateWithArcjet = async (fingerprint: string) => {
 	}
 };
 
+/**
+ * The function builds a query to select videos along with user information by joining the videos and
+ * user tables.
+ * @returns The `buildVideoWithUserQuery` function is returning a query that selects the `video` field
+ * from the `videos` table and the `user` field with `id`, `name`, and `image` properties from the
+ * `user` table. It then performs a left join between the `videos` and `user` tables on the `userId`
+ * and `id` fields respectively.
+ */
 const buildVideoWithUserQuery = () => {
 	return db
 		.select({
@@ -131,6 +139,19 @@ export const saveVideoDetails = withErrorHandling(
 	}
 );
 
+/**
+ * This `getAllVideos` function is responsible for fetching a list of videos based on certain criteria.
+ * @param searchQuery - The `searchQuery` parameter is a string that is used to filter the videos based on
+ * their title. It is an optional parameter, and if not provided, it defaults to an empty string.
+ * @param sortFilter - The `sortFilter` parameter is used to specify the sorting order of the videos. It
+ * can have the following values:
+ * @param pageNumber - The `pageNumber` parameter is used to specify the page number of the videos to be
+ * retrieved. It is an optional parameter with a default value of 1.
+ * @param pageSize - The `pageSize` parameter is used to specify the number of videos to be retrieved per
+ * page. It is an optional parameter with a default value of 8.
+ * @returns The function `getAllVideos` returns a Promise that resolves to an object with two properties:
+ * `videos` and `pagination`.
+ */
 export const getAllVideos = withErrorHandling(
 	async (
 		searchQuery: string = "",

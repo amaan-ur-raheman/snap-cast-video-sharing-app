@@ -8,6 +8,21 @@ export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));
 }
 
+/**
+ * The function `updateURLParams` updates URL parameters based on the provided updates and returns the
+ * updated URL string.
+ * @param {URLSearchParams} currentParams - `currentParams` is the current URL parameters that you want
+ * to update. It is of type `URLSearchParams`, which represents a set of key/value pairs in a URL query
+ * string.
+ * @param updates - The `updates` parameter is a record object that contains key-value pairs where the
+ * key is a parameter name and the value is the updated value for that parameter. The value can be a
+ * string, null, or undefined.
+ * @param {string} [basePath=/] - The `basePath` parameter in the `updateURLParams` function is a
+ * string that represents the base path for the URL. It is used as the initial part of the URL before
+ * the query parameters. If no `basePath` is provided, the default value is set to "/".
+ * @returns The `updateURLParams` function returns a string representing the updated URL with the
+ * modified parameters based on the provided `currentParams`, `updates`, and `basePath` parameters.
+ */
 export const updateURLParams = (
 	currentParams: URLSearchParams,
 	updates: Record<string, string | null | undefined>,
@@ -101,6 +116,16 @@ export const withErrorHandling = <T, A extends unknown[]>(
 	};
 };
 
+/**
+ * The function `getOrderByClause` returns an SQL order by clause based on the provided filter,
+ * defaulting to ordering by creation date in descending order.
+ * @param {string} [filter] - The `filter` parameter is used to determine the order in which the videos
+ * should be sorted. It can have the following values:
+ * @returns The function `getOrderByClause` returns an SQL order by clause based on the provided
+ * filter. If the filter is "Most Viewed", it returns an order by clause for sorting by views in
+ * descending order. If the filter is "Least Viewed", it returns an order by clause for sorting by
+ * views in ascending order. If the filter is "Oldest First", it returns an order by clause
+ */
 export const getOrderByClause = (filter?: string) => {
 	switch (filter) {
 		case "Most Viewed":
@@ -115,6 +140,19 @@ export const getOrderByClause = (filter?: string) => {
 	}
 };
 
+/**
+ * The function generates a pagination array based on the current page and total number of pages,
+ * displaying a subset of pages with ellipses for navigation.
+ * @param {number} currentPage - The `currentPage` parameter represents the current page number in a
+ * pagination system. It is the page that the user is currently viewing or interacting with.
+ * @param {number} totalPages - The `totalPages` parameter represents the total number of pages in a
+ * pagination system. This function `generatePagination` is designed to generate an array representing
+ * the pagination links based on the current page and total number of pages. The function handles
+ * different scenarios for displaying pagination links depending on the current page and total
+ * @returns The function `generatePagination` returns an array representing the pagination links based
+ * on the current page and total number of pages. The array contains the pagination links to be
+ * displayed.
+ */
 export const generatePagination = (currentPage: number, totalPages: number) => {
 	if (totalPages <= 7) {
 		return Array.from({ length: totalPages }, (_, i) => i + 1);
@@ -346,6 +384,16 @@ export function daysAgo(inputDate: Date): string {
 export const createIframeLink = (videoId: string) =>
 	`https://iframe.mediadelivery.net/embed/479965/${videoId}?autoplay=true&preload=true`;
 
+/**
+ * The function `doesTitleMatch` is used to check if a search query matches the title of a video after
+ * removing special characters and spaces.
+ * @param {any} videos - The `videos` parameter is likely an object or an array containing video data.
+ * It seems to have a property or key called `title` which holds the title of the video. The function
+ * `doesTitleMatch` is designed to check if the title of a video matches a given search query after
+ * removing
+ * @param {string} searchQuery - The `searchQuery` parameter is a string that represents the search
+ * query entered by the user. It is used to search for a match in the `videos` based on the title.
+ */
 export const doesTitleMatch = (videos: any, searchQuery: string) =>
 	ilike(
 		sql`REPLACE(REPLACE(REPLACE(LOWER(${videos.title}), '-', ''), '.', ''), ' ', '')`,
