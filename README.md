@@ -2,6 +2,10 @@
 
 A modern, full-featured screen recording and video sharing application built with Next.js 15, inspired by Loom. SnapCast allows users to record their screens, upload videos, and share them with others in a beautiful, intuitive interface.
 
+## 🌐 Live Demo
+
+**[🚀 Try SnapCast Live](https://snap-cast-video-sharing-app.vercel.app)**
+
 ![SnapCast Home Page](public/assets/readme/SnapCast%20Home%20Page.png)
 
 ## ✨ Features
@@ -51,6 +55,7 @@ A modern, full-featured screen recording and video sharing application built wit
 <details>
 <summary>View All Screenshots</summary>
 
+
 ### Authentication Page
 
 ![Auth Page](public/assets/readme/SnapCast%20Auth%20Page.png)
@@ -67,6 +72,9 @@ A modern, full-featured screen recording and video sharing application built wit
 
 ![Upload Page](public/assets/readme/SnapCast%20Upload%20Page.png)
 
+### Screen Recording Interface
+
+![Screen Recording](public/assets/readme/SnapCast%20%20Screen%20Recording.jpeg)
 </details>
 
 ## 🛠️ Tech Stack
