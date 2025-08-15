@@ -11,16 +11,28 @@ type PaginationProps = {
 	filterString?: string;
 };
 
-/* The `Pagination` component in the provided TypeScript React code snippet is responsible for
-rendering a pagination UI element. Here's a breakdown of what the `Pagination` component does: 
-1. It takes in props such as `currentPage`, `totalPages`, `queryString`, and `filterString`.
-2. It uses the `generatePagination` function to generate an array of page numbers to display in the pagination component.
-3. It uses the `useRouter` and `useSearchParams` hooks from Next.js to handle navigation and update the URL parameters.
-4. It defines a `createPageUrl` function to generate URLs with updated pagination parameters.
-5. It defines a `navigateToPage` function to handle page navigation and update the URL.
-6. It renders a pagination UI with previous, next, and page number buttons.
-7. It applies conditional styling to the buttons based on the current page and total pages.
-*/
+/**
+ * A responsive pagination component that enables navigation through paginated content.
+ *
+ * @component
+ * @param {Object} props
+ * @param {number} [props.currentPage=1] - The currently active page number
+ * @param {number} [props.totalPages=10] - Total number of available pages
+ * @param {string} [props.queryString=""] - Search query parameter to maintain in pagination URLs
+ * @param {string} [props.filterString=""] - Filter parameter to maintain in pagination URLs
+ * 
+ * @example
+ * ```tsx
+ * <Pagination 
+ *   currentPage={2}
+ *   totalPages={10}
+ *   queryString="search-term"
+ *   filterString="category=books"
+ * />
+ * ```
+ * 
+ * @returns A pagination component with previous/next buttons and page numbers
+ */
 const Pagination = ({
 	currentPage = 1,
 	totalPages = 10,

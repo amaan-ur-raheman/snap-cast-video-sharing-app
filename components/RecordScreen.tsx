@@ -6,8 +6,18 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
-/* The `RecordScreen` component in the provided code snippet is a React functional component that
-handles screen recording functionality. Here is a breakdown of what it does: */
+/**
+ * A React component that provides screen recording functionality with a modal interface.
+ * Features include:
+ * - Starting/stopping screen recording
+ * - Previewing recorded video
+ * - Re-recording capability
+ * - Upload functionality for recorded videos
+ * - Recording duration tracking
+ * - Modal-based UI with proper state management
+ *
+ * Uses the custom useScreenRecording hook to handle core recording operations.
+ */
 const RecordScreen = () => {
 	const router = useRouter();
 	const [isOpen, setIsOpen] = useState(false);
@@ -24,25 +34,25 @@ const RecordScreen = () => {
 	} = useScreenRecording();
 
 	/**
-     * The `closeModal` function resets recording and sets the `isOpen` state to false.
-     */
-    const closeModal = () => {
+	 * The `closeModal` function resets recording and sets the `isOpen` state to false.
+	 */
+	const closeModal = () => {
 		resetRecording();
 		setIsOpen(false);
 	};
 
 	/**
-     * The `handleStart` function asynchronously starts recording.
-     */
-    const handleStart = async () => {
+	 * The `handleStart` function asynchronously starts recording.
+	 */
+	const handleStart = async () => {
 		await startRecording();
 	};
 
 	/**
-     * The function `recordAgain` resets and starts recording, then updates the video source if a recorded
-     * video URL is available.
-     */
-    const recordAgain = async () => {
+	 * The function `recordAgain` resets and starts recording, then updates the video source if a recorded
+	 * video URL is available.
+	 */
+	const recordAgain = async () => {
 		resetRecording();
 		await startRecording();
 
@@ -52,12 +62,12 @@ const RecordScreen = () => {
 	};
 
 	/**
-     * The function `goToUpload` prepares a recorded video for upload by storing its details in
-     * sessionStorage and then navigating to the upload page.
-     * @returns If the `recordedBlob` is falsy (e.g., `null`, `undefined`, `false`, `0`, `""`), the
-     * function `goToUpload` will return early without executing the rest of the code block.
-     */
-    const goToUpload = () => {
+	 * The function `goToUpload` prepares a recorded video for upload by storing its details in
+	 * sessionStorage and then navigating to the upload page.
+	 * @returns If the `recordedBlob` is falsy (e.g., `null`, `undefined`, `false`, `0`, `""`), the
+	 * function `goToUpload` will return early without executing the rest of the code block.
+	 */
+	const goToUpload = () => {
 		if (!recordedBlob) return;
 
 		const url = URL.createObjectURL(recordedBlob);
@@ -74,13 +84,14 @@ const RecordScreen = () => {
 		);
 
 		router.push("/upload");
+		closeModal();
 	};
 
 	return (
 		<div className="record">
 			<button className="primary-btn" onClick={() => setIsOpen(true)}>
 				<Image src={ICONS.record} alt="record" width={16} height={16} />
-				<span>Record a Video</span>
+				<span className="truncate">Record a Video</span>
 			</button>
 
 			{isOpen && (
@@ -103,7 +114,7 @@ const RecordScreen = () => {
 							{isRecording ? (
 								<article>
 									<div />
-									<span>Recording in progress</span>
+									<span>Recording in progress...</span>
 								</article>
 							) : recordedVideoUrl ? (
 								<video

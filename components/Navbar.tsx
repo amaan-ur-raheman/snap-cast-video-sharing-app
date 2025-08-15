@@ -4,7 +4,13 @@ import { authClient } from "@/lib/auth-client";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect, useRouter } from "next/navigation";
+import ImageWIthFallback from "./ImageWIthFallback";
 
+/**
+ * Navigation bar component that provides the main app header and authentication controls
+ * @component
+ * @returns {JSX.Element} A header element containing the navigation bar with authentication controls
+ */
 const Navbar = () => {
 	const router = useRouter();
 	const { data: session } = authClient.useSession();
@@ -29,8 +35,8 @@ const Navbar = () => {
 							title="User"
 							onClick={() => router.push(`/profile/${user?.id}`)}
 						>
-							<Image
-								src={user?.image || "/assets/images/dummy.jpg"}
+							<ImageWIthFallback
+								src={user?.image ?? ""}
 								alt="User"
 								width={36}
 								height={36}
