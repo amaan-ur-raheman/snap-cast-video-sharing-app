@@ -201,8 +201,20 @@ export const getAllVideos = withErrorHandling(
 	}
 );
 
-/* The `export const getVideoById` function is a server action that fetches a specific video record by
-its unique identifier (`videoId`). Here's a breakdown of what it does: */
+/**
+ * Fetches a specific video record along with its associated user information
+ *
+ * This server action retrieves a single video by its unique identifier and includes:
+ * - All video metadata (title, description, URLs, visibility, etc.)
+ * - Associated user information (id, name, profile image)
+ *
+ * The function uses a joined query to fetch both video and user data in a single
+ * database operation for better performance.
+ *
+ * @param videoId - The unique identifier of the video to retrieve
+ * @returns A Promise that resolves to the video record with user details, or undefined if not found
+ * @throws Will throw an error if the database query fails
+ */
 export const getVideoById = withErrorHandling(async (videoId: string) => {
 	const [videoRecord] = await buildVideoWithUserQuery().where(
 		eq(videos.id, videoId)
@@ -210,6 +222,55 @@ export const getVideoById = withErrorHandling(async (videoId: string) => {
 
 	return videoRecord;
 });
+
+/**
+ * Fetches the auto-generated English transcript/captions for a video
+ *
+ * This server action retrieves the VTT (Web Video Text Tracks) file containing
+ * the automatically generated English captions from Bunny.net's transcription service.
+ *
+ * The transcript is returned as plain text in VTT format, which includes:
+ * - Timing information for each caption segment
+ * - The actual transcribed text
+ * - Metadata and formatting information
+ *
+ * @param videoId - The unique identifier of the video whose transcript should be fetched
+ * @returns A Promise that resolves to the transcript text in VTT format
+ * @throws Will throw an error if the transcript fetch fails or is not available
+ */
+export const getTranscript = withErrorHandling(async (videoId: string) => {
+	const response = await fetch(
+		`${BUNNY.TRANSCRIPT_URL}/${videoId}/captions/en-auto.vtt`
+	);
+	return response.text();
+});
+
+/**
+ * Increments the view count for a specific video
+ *
+ * This server action performs the following:
+ * 1. Atomically increments the video's view counter by 1 in the database
+ * 2. Updates the video's last modified timestamp
+ * 3. Revalidates the video's detail page cache to reflect the new view count
+ *
+ * The view count increment is done using a SQL expression to ensure
+ * atomic updates even with concurrent requests.
+ *
+ * @param videoId - The unique identifier of the video whose views should be incremented
+ * @returns An empty object to indicate successful increment
+ * @throws Will throw an error if the database update fails
+ */
+export const incrementVideoViews = withErrorHandling(
+	async (videoId: string) => {
+		await db
+			.update(videos)
+			.set({ views: sql`${videos.views} + 1`, updatedAt: new Date() })
+			.where(eq(videos.videoId, videoId));
+
+		revalidatePaths([`/video/${videoId}`]);
+		return {};
+	}
+);
 
 export const getAllVideosByUser = withErrorHandling(
 	async (
@@ -253,7 +314,7 @@ export const getAllVideosByUser = withErrorHandling(
 
 /**
  * Updates the visibility status of a video
- * 
+ *
  * This function performs the following operations:
  * 1. Validates the request using Arcjet rate limiting
  * 2. Updates the video's visibility status in the database
@@ -275,6 +336,43 @@ export const updateVideoVisibility = withErrorHandling(
 
 		revalidatePaths(["/", `/video/${videoId}`]);
 		return {};
+	}
+);
+
+/**
+ * Fetches and returns the current processing status of a video from Bunny.net CDN
+ *
+ * This server action queries the Bunny.net API to get detailed information about
+ * the video's processing state, including:
+ * - Whether processing is complete (status === 4)
+ * - Current encoding progress percentage
+ * - Raw status code from Bunny.net
+ *
+ * The status codes from Bunny.net represent:
+ * - 0: Queued
+ * - 1: Processing
+ * - 4: Completed
+ * - 5: Failed
+ *
+ * @param videoId - The unique identifier of the video on Bunny.net
+ * @returns An object containing:
+ *          - isProcessed: boolean indicating if processing is complete
+ *          - encodingProgress: number between 0-100 showing encoding progress
+ *          - status: raw status code from Bunny.net
+ * @throws Will throw an error if the API request fails
+ */
+export const getVideoProcessingStatus = withErrorHandling(
+	async (videoId: string) => {
+		const processingInfo = await apiFetch<BunnyVideoResponse>(
+			`${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+			{ bunnyType: "stream" }
+		);
+
+		return {
+			isProcessed: processingInfo.status === 4,
+			encodingProgress: processingInfo.encodeProgress || 0,
+			status: processingInfo.status,
+		};
 	}
 );
 

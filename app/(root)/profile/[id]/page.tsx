@@ -1,10 +1,18 @@
 import EmptyState from "@/components/EmptyState";
 import Header from "@/components/Header";
 import VideoCard from "@/components/VideoCard";
-import { dummyCards } from "@/constants";
 import { getAllVideosByUser } from "@/lib/actions/video";
 import { redirect } from "next/navigation";
 
+/**
+ * This function fetches user data and videos based on the provided parameters, and renders them in a
+ * page with appropriate components.
+ * @param {ParamsWithSearch}  - The `Page` function is an asynchronous function that takes in two
+ * parameters: `params` and `searchParams`.
+ * @returns The `Page` function is returning JSX elements that represent a page layout. It includes a
+ * header with user information, a section for displaying video cards, and an empty state message if
+ * there are no videos available.
+ */
 const Page = async ({ params, searchParams }: ParamsWithSearch) => {
 	const { id } = await params;
 	const { query, filter } = await searchParams;

@@ -329,6 +329,16 @@ export const createRecordingBlob = (
 export const calculateRecordingDuration = (startTime: number | null): number =>
 	startTime ? Math.round((Date.now() - startTime) / 1000) : 0;
 
+/**
+ * The function `parseTranscript` takes a string representing a transcript in WebVTT format and parses
+ * it into an array of `TranscriptEntry` objects containing timestamps and corresponding text.
+ * @param {string} transcript - The `parseTranscript` function takes a string `transcript` as input,
+ * which represents a transcript in WebVTT format. The function parses this transcript and extracts the
+ * timestamped entries along with their corresponding text content.
+ * @returns The `parseTranscript` function returns an array of `TranscriptEntry` objects. Each
+ * `TranscriptEntry` object contains a `time` property representing the start time of the transcript
+ * entry and a `text` property representing the text content of that entry.
+ */
 export function parseTranscript(transcript: string): TranscriptEntry[] {
 	const lines = transcript.replace(/^WEBVTT\s*/, "").split("\n");
 	const result: TranscriptEntry[] = [];
