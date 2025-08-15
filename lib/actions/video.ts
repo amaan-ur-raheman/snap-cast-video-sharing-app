@@ -201,6 +201,8 @@ export const getAllVideos = withErrorHandling(
 	}
 );
 
+/* The `export const getVideoById` function is a server action that fetches a specific video record by
+its unique identifier (`videoId`). Here's a breakdown of what it does: */
 export const getVideoById = withErrorHandling(async (videoId: string) => {
 	const [videoRecord] = await buildVideoWithUserQuery().where(
 		eq(videos.id, videoId)
@@ -246,5 +248,67 @@ export const getAllVideosByUser = withErrorHandling(
 			);
 
 		return { user: userInfo, videos: userVideos, count: userVideos.length };
+	}
+);
+
+/**
+ * Updates the visibility status of a video
+ * 
+ * This function performs the following operations:
+ * 1. Validates the request using Arcjet rate limiting
+ * 2. Updates the video's visibility status in the database
+ * 3. Updates the video's last modified timestamp
+ * 4. Revalidates relevant cache paths to reflect changes
+ *
+ * @param videoId - The unique identifier of the video to update
+ * @param visibility - The new visibility status to set ('public' or 'private')
+ * @returns An empty object to indicate successful update
+ * @throws Will throw an error if validation fails or database update fails
+ */
+export const updateVideoVisibility = withErrorHandling(
+	async (videoId: string, visibility: Visibility) => {
+		await validateWithArcjet(videoId);
+		await db
+			.update(videos)
+			.set({ visibility, updatedAt: new Date() })
+			.where(eq(videos.videoId, videoId));
+
+		revalidatePaths(["/", `/video/${videoId}`]);
+		return {};
+	}
+);
+
+/**
+ * Deletes a video and its associated thumbnail from both storage and database
+ *
+ * This function performs three main operations:
+ * 1. Deletes the video from Bunny.net video streaming service
+ * 2. Deletes the associated thumbnail from Bunny.net storage
+ * 3. Removes the video entry from the local database
+ *
+ * After deletion, it revalidates the homepage and video detail page paths
+ * to ensure the UI reflects the changes.
+ *
+ * @param videoId - The unique identifier of the video to be deleted
+ * @param thumbnailUrl - The complete URL of the video's thumbnail
+ * @returns An empty object to indicate successful deletion
+ * @throws Will throw an error if any deletion operation fails
+ */
+export const deleteVideo = withErrorHandling(
+	async (videoId: string, thumbnailUrl: string) => {
+		await apiFetch(
+			`${VIDEO_STREAM_BASE_URL}/${BUNNY_LIBRARY_ID}/videos/${videoId}`,
+			{ method: "DELETE", bunnyType: "stream" }
+		);
+
+		const thumbnailPath = thumbnailUrl.split("thumbnails/")[1];
+		await apiFetch(
+			`${THUMBNAIL_STORAGE_BASE_URL}/thumbnails/${thumbnailPath}`,
+			{ method: "DELETE", bunnyType: "storage", expectJson: false }
+		);
+
+		await db.delete(videos).where(eq(videos.videoId, videoId));
+		revalidatePaths(["/", `/video/${videoId}`]);
+		return {};
 	}
 );

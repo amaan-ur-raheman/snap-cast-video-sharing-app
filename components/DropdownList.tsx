@@ -54,11 +54,11 @@ const DropdownList = ({
 			</div>
 
 			{isOpen && (
-				<ul className="dropdown">
+				<ul className="dropdown z-100">
 					{options.map((option) => (
 						<li
 							key={option}
-							className={cn("list-item", {
+							className={cn("list-item capitalize", {
 								"bg-pink-100 text-white":
 									selectedOption === option,
 							})}
